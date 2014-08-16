@@ -14,16 +14,14 @@
 
 var React = require('react');
 
-var List = require('components/List.react');
+var ListItem = require('components/ListItem.react');
 var ListStore = require('stores/ListStore');
 
 function getStateFromStores() {
   var rootList = ListStore.getRootList();
-  var children = rootList.children || [];
 
   return {
-    list: rootList,
-    children: children,
+    items: rootList.children || [],
   }
 }
 
@@ -40,8 +38,8 @@ var ListApp = React.createClass({
   render: function() {
     return (
       <ul className="listApp">
-        {this.state.children.map(function(list) {
-          return <List list={list} />
+        {this.state.items.map(function(list) {
+          return <ListItem list={list} />
         })}
       </ul>
     );

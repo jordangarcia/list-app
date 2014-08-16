@@ -16,6 +16,6 @@ var fakeListData = require('fakeListData');
 
 module.exports = {
   getList: function() {
-    ServerActionCreators.receiveList(fakeListData);
+    ServerActionCreators.receiveRootList(fakeListData);
   }
 };

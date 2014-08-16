@@ -13,5 +13,8 @@
 var keyMirror = require('react/lib/keyMirror');
 
 module.exports = keyMirror({
-  RECEIVE_LIST: null
+  RECEIVE_ROOT_LIST: null,
+  FOCUS_LIST_ITEM: null,
+  ADD_LIST_ITEM: null,
+  UPDATE_LIST: null,
 });

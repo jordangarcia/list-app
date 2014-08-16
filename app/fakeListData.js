@@ -10,35 +10,30 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-module.exports = {
-  id: 1,
-  value: null,
-  isRoot: true,
-  children: [
-    {
-      id: 1,
-      value: 'List item 1',
-      children: [],
-    },
-    {
-      id: 2,
-      value: 'List item 2',
-      children: [],
-    },
-    {
-      id: 3,
-      value: 'List item 3',
-      children: [],
-    },
-    {
-      id: 4,
-      value: 'List item 4',
-      children: [],
-    },
-    {
-      id: 5,
-      value: 'List item 5',
-      children: [],
-    },
-  ]
-};
+module.exports = [
+  {
+    id: 1,
+    value: 'List item 1',
+    children: [],
+  },
+  {
+    id: 2,
+    value: 'List item 2',
+    children: [],
+  },
+  {
+    id: 3,
+    value: 'List item 3',
+    children: [],
+  },
+  {
+    id: 4,
+    value: 'List item 4',
+    children: [],
+  },
+  {
+    id: 5,
+    value: 'List item 5',
+    children: [],
+  },
+];

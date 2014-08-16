@@ -15,9 +15,9 @@ var ActionTypes = require('../constants/ActionTypes');
 
 module.exports = {
 
-  receiveList: function(list) {
+  receiveRootList: function(list) {
     AppDispatcher.handleServerAction({
-      type: ActionTypes.RECEIVE_LIST,
+      type: ActionTypes.RECEIVE_ROOT_LIST,
       list: list,
     });
   },

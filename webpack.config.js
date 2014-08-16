@@ -1,11 +1,22 @@
 var path = require("path");
 var webpack = require("webpack");
+
+/**
+ * Joins the inputted path with the current dir
+ */
+var dir = function(inp) {
+  return path.join(__dirname, inp)
+}
+
 module.exports = {
-  context: __dirname + '/app',
-  entry: './index',
+  context: dir('app'),
+  entry: './app',
   output: {
-    path: path.join(__dirname, "dist"),
+    path: dir('dist'),
     filename: "bundle.js",
+  },
+  resolve: {
+    root: dir('app'),
   },
   module: {
     loaders: [

@@ -1,4 +1,5 @@
 var gulp = require("gulp");
+var connect = require("gulp-connect");
 var gutil = require("gulp-util");
 var webpack = require("webpack");
 var WebpackDevServer = require("webpack-dev-server");
@@ -6,6 +7,10 @@ var webpackConfig = require("./webpack.config.js");
 
 // The development server (the recommended option for development)
 gulp.task("default", ["webpack-dev-server"]);
+
+gulp.task('connect', function() {
+  connect.server();
+})
 
 // Build and watch cycle (another option for development)
 // Advantage: No server required, can run app from filesystem

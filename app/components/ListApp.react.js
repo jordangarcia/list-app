@@ -22,6 +22,7 @@ function getStateFromStores() {
   var rootList = ListStore.getRootList();
   var selectedItem = SelectedItemStore.get();
 
+  console.log('selectedItem', selectedItem);
   return {
     items: rootList.children || [],
     selectedItem: selectedItem,
@@ -41,6 +42,9 @@ var ListApp = React.createClass({
 
   render: function() {
     var selectedItem = this.state.selectedItem;
+    if (!selectedItem) {
+      debugger;
+    }
     return (
       <ul className="listApp">
         {this.state.items.map(function(list) {

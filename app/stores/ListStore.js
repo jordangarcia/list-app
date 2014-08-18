@@ -24,8 +24,13 @@ var listRegistry = {};
  * @param {List} insertBelow list item to insert below
  */
 function addList(list, insertBelow) {
-  list.id = ++_ID;
-  listRegistry[list.id] = list;
+  if (!list.id) {
+    list.id = ++_ID;
+  }
+  // maintain reference by id
+  if (!listRegistry[list.id]) {
+    listRegistry[list.id] = list;
+  }
 
   if (!list.parent) {
     list.parent = rootList;
@@ -45,6 +50,11 @@ function addList(list, insertBelow) {
     list.parent.children.splice(ind, 0, list);
   }
 
+}
+
+function addListRecursively(list) {
+  addList(list);
+
   if (list.children) {
     list.children.forEach(function(childList) {
       addList(childList);
@@ -57,6 +67,40 @@ function traverseList(list, fn) {
     traverseList(item, fn);
     fn(item);
   });
+}
+
+/**
+ * Indents a list item
+ * returns whether it was successful
+ * @param {List} list
+ * @return {Boolean}
+ */
+function indentListItem(list) {
+  var newParent = ListOperations.getPrevItem(list);
+  if (!newParent) {
+    return false;
+  }
+  ListOperations.removeItem(list);
+  list.parent = newParent;
+  addList(list);
+  return true;
+}
+
+/**
+ * De-indents a list item
+ * returns whether it was successful
+ * @param {List} list
+ * @return {Boolean}
+ */
+function deindentListItem(list) {
+  var newParent = list.parent.parent;
+  if (!newParent) {
+    return false;
+  }
+  ListOperations.removeItem(list);
+  list.parent = newParent;
+  addList(list);
+  return true;
 }
 
 /**
@@ -92,32 +136,6 @@ var ListStore = merge(EventEmitter.prototype, {
   getRootList: function() {
     return rootList;
   },
-
-  getNextItem: function(listItem) {
-    var parentList = listItem.parent.children;
-    invariant(
-      parentList.indexOf(listItem) !== -1,
-      'List item not in parent list'
-    );
-    var ind = parentList.indexOf(listItem);
-
-    if (parentList[ind + 1]) {
-      return parentList[ind + 1];
-    }
-  },
-
-  getPrevItem: function(listItem) {
-    var parentList = listItem.parent.children;
-    invariant(
-      parentList.indexOf(listItem) !== -1,
-      'List item not in parent list'
-    );
-    var ind = parentList.indexOf(listItem);
-
-    if (parentList[ind - 1]) {
-      return parentList[ind - 1];
-    }
-  },
 });
 
 ListStore.dispatchToken = AppDispatcher.register(function(payload) {
@@ -130,6 +148,20 @@ ListStore.dispatchToken = AppDispatcher.register(function(payload) {
       ListStore.emitChange();
       break;
 
+    case ActionTypes.INDENT_LIST_ITEM:
+      var changed = indentListItem(action.listItem);
+      if (changed) {
+        ListStore.emitChange();
+      }
+      break;
+
+    case ActionTypes.DEINDENT_LIST_ITEM:
+      var changed = deindentListItem(action.listItem);
+      if (changed) {
+        ListStore.emitChange();
+      }
+      break;
+
     case ActionTypes.UPDATE_LIST:
       updateList(action.list, action.data);
       ListStore.emitChange();
@@ -137,7 +169,7 @@ ListStore.dispatchToken = AppDispatcher.register(function(payload) {
 
     case ActionTypes.RECEIVE_ROOT_LIST:
       action.list.forEach(function(list) {
-        addList(list);
+        addListRecursively(list);
       });
       ListStore.emitChange();
       break;

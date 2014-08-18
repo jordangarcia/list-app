@@ -118,6 +118,17 @@ var ListItem = React.createClass({
         event.stopPropagation();
         event.preventDefault();
         break;
+      case 'Tab':
+        // create a new list and pass the current list as the parent
+        if (event.shiftKey) {
+        debugger;
+          ViewActions.deindentListItem(currentListItem);
+        } else {
+          ViewActions.indentListItem(currentListItem);
+        }
+        event.stopPropagation();
+        event.preventDefault();
+        break;
       case 'ArrowUp':
         ViewActions.moveFocus(currentListItem, 'up');
         event.stopPropagation();
@@ -151,6 +162,7 @@ var ListItem = React.createClass({
 
   render: function() {
     var list = this.props.list;
+    var selectedItem = this.props.selectedItem;
     return (
       <li>
         <ContentEditable onKeyDown={this._onKeyDown}
@@ -159,7 +171,7 @@ var ListItem = React.createClass({
                          ref="input" />
         <ul>
           {list.children.map(function(item) {
-            return <ListItem list={item} />
+            return <ListItem list={item} selectedItem={selectedItem} />
           })}
         </ul>
       </li>

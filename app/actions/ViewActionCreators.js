@@ -56,9 +56,9 @@ module.exports = {
   moveFocus: function(currentItem, dir, focusAtEnd) {
     var itemToFocus;
     if (dir === 'up') {
-      itemToFocus = ListStore.getPrevItem(currentItem);
+      itemToFocus = ListOperations.getPrevItem(currentItem);
     } else {
-      itemToFocus = ListStore.getNextItem(currentItem);
+      itemToFocus = ListOperations.getNextItem(currentItem);
     }
 
     if (itemToFocus) {
@@ -86,6 +86,20 @@ module.exports = {
       type: ActionTypes.FOCUS_LIST_ITEM,
       listItem: listItem,
       focusAtEnd: !!focusAtEnd,
+    });
+  },
+
+  indentListItem: function(listItem) {
+    AppDispatcher.handleViewAction({
+      type: ActionTypes.INDENT_LIST_ITEM,
+      listItem: listItem,
+    });
+  },
+
+  deindentListItem: function(listItem) {
+    AppDispatcher.handleViewAction({
+      type: ActionTypes.DEINDENT_LIST_ITEM,
+      listItem: listItem,
     });
   },
 

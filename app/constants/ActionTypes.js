@@ -15,6 +15,10 @@ var keyMirror = require('react/lib/keyMirror');
 module.exports = keyMirror({
   RECEIVE_ROOT_LIST: null,
   FOCUS_LIST_ITEM: null,
+
+  INDENT_LIST_ITEM: null,
+  DEINDENT_LIST_ITEM: null,
+
   ADD_LIST_ITEM: null,
   UPDATE_LIST: null,
 });

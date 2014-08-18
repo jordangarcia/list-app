@@ -1,9 +1,12 @@
 var AppDispatcher = require('../dispatcher/AppDispatcher');
+var ListStore = require('../stores/ListStore');
 var ActionTypes = require('../constants/ActionTypes');
 var ListOperations = require('utils/ListOperations');
 
 module.exports = {
-
+  /**
+   * Handle enter press
+   */
   enterPressed: function(listItem, position) {
     // if the caret is not at the end of the list item than we want to split
 
@@ -16,7 +19,7 @@ module.exports = {
       AppDispatcher.handleViewAction({
         type: ActionTypes.ADD_LIST_ITEM,
         newListItem: newListItem,
-        below: listItem,
+        insertBelow: listItem,
       });
 
       // focus the newly created list item
@@ -38,19 +41,51 @@ module.exports = {
       AppDispatcher.handleViewAction({
         type: ActionTypes.ADD_LIST_ITEM,
         newListItem: newListItem,
-        below: listItem,
+        insertBelow: listItem,
       });
 
       // focus the newly created list item
       this.focusListItem(newListItem);
-
     }
   },
 
-  focusListItem: function(listItem) {
+  /**
+   * @param {List} currentItem
+   * @param {String} dir ('up'|'down')
+   */
+  moveFocus: function(currentItem, dir, focusAtEnd) {
+    var itemToFocus;
+    if (dir === 'up') {
+      itemToFocus = ListStore.getPrevItem(currentItem);
+    } else {
+      itemToFocus = ListStore.getNextItem(currentItem);
+    }
+
+    if (itemToFocus) {
+      AppDispatcher.handleViewAction({
+        type: ActionTypes.FOCUS_LIST_ITEM,
+        listItem: itemToFocus,
+        focusAtEnd: !!focusAtEnd,
+      });
+    } else {
+      // if there is no next item move the cursor to beginning
+      // or end of line
+      AppDispatcher.handleViewAction({
+        type: ActionTypes.FOCUS_LIST_ITEM,
+        listItem: currentItem,
+        focusAtEnd: (dir === 'down'),
+      });
+    }
+  },
+
+  /**
+   * @param {List} listItem
+   */
+  focusListItem: function(listItem, focusAtEnd) {
     AppDispatcher.handleViewAction({
       type: ActionTypes.FOCUS_LIST_ITEM,
       listItem: listItem,
+      focusAtEnd: !!focusAtEnd,
     });
   },
 

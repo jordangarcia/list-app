@@ -18,7 +18,12 @@ var rootList = ListOperations.createList({
 // registry of id => list
 var listRegistry = {};
 
-function addList(list, below) {
+/**
+ * adds a new listItem to the rootList or list.parent
+ * @param {List} list
+ * @param {List} insertBelow list item to insert below
+ */
+function addList(list, insertBelow) {
   list.id = ++_ID;
   listRegistry[list.id] = list;
 
@@ -26,17 +31,17 @@ function addList(list, below) {
     list.parent = rootList;
   }
 
-  if (!below) {
-    // not appending below a specific item
+  if (!insertBelow) {
+    // not appending insertBelow a specific item
     list.parent.children.push(list)
   } else {
     invariant(
-      list.parent.children.indexOf(below) !== -1,
-      'Cannot append list item below item with id = %s',
-      below.id
+      list.parent.children.indexOf(insertBelow) !== -1,
+      'Cannot append list item insertBelow item with id = %s',
+      insertBelow.id
     );
-    var ind = list.parent.children.indexOf(below) + 1;
-    // insert list item after the `below` item
+    var ind = list.parent.children.indexOf(insertBelow) + 1;
+    // insert list item after the `insertBelow` item
     list.parent.children.splice(ind, 0, list);
   }
 
@@ -51,12 +56,6 @@ function traverseList(list, fn) {
   list.children.forEach(function(item) {
     traverseList(item, fn);
     fn(item);
-  });
-}
-
-function focusListItem(listItem) {
-  traverseList(rootList, function(item) {
-    item.hasFocus = (item.id === listItem.id);
   });
 }
 
@@ -92,7 +91,33 @@ var ListStore = merge(EventEmitter.prototype, {
 
   getRootList: function() {
     return rootList;
-  }
+  },
+
+  getNextItem: function(listItem) {
+    var parentList = listItem.parent.children;
+    invariant(
+      parentList.indexOf(listItem) !== -1,
+      'List item not in parent list'
+    );
+    var ind = parentList.indexOf(listItem);
+
+    if (parentList[ind + 1]) {
+      return parentList[ind + 1];
+    }
+  },
+
+  getPrevItem: function(listItem) {
+    var parentList = listItem.parent.children;
+    invariant(
+      parentList.indexOf(listItem) !== -1,
+      'List item not in parent list'
+    );
+    var ind = parentList.indexOf(listItem);
+
+    if (parentList[ind - 1]) {
+      return parentList[ind - 1];
+    }
+  },
 });
 
 ListStore.dispatchToken = AppDispatcher.register(function(payload) {
@@ -100,13 +125,8 @@ ListStore.dispatchToken = AppDispatcher.register(function(payload) {
 
   switch(action.type) {
 
-    case ActionTypes.FOCUS_LIST_ITEM:
-      focusListItem(action.listItem);
-      ListStore.emitChange();
-      break;
-
     case ActionTypes.ADD_LIST_ITEM:
-      addList(action.newListItem, action.below);
+      addList(action.newListItem, action.insertBelow);
       ListStore.emitChange();
       break;
 

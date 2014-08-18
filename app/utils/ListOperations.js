@@ -9,7 +9,6 @@ function createList(values) {
     parent: null,
     value: null,
     children: [],
-    hasFocus: false,
   }, values);
 }
 

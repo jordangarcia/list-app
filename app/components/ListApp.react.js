@@ -16,12 +16,15 @@ var React = require('react');
 
 var ListItem = require('components/ListItem.react');
 var ListStore = require('stores/ListStore');
+var SelectedItemStore = require('stores/SelectedItemStore');
 
 function getStateFromStores() {
   var rootList = ListStore.getRootList();
+  var selectedItem = SelectedItemStore.get();
 
   return {
     items: rootList.children || [],
+    selectedItem: selectedItem,
   }
 }
 
@@ -33,13 +36,16 @@ var ListApp = React.createClass({
 
   componentDidMount: function() {
     ListStore.addChangeListener(this._onChange);
+    SelectedItemStore.addChangeListener(this._onChange);
   },
 
   render: function() {
+    var selectedItem = this.state.selectedItem;
     return (
       <ul className="listApp">
         {this.state.items.map(function(list) {
-          return <ListItem list={list} />
+          return <ListItem list={list}
+                           selectedItem={selectedItem} />
         })}
       </ul>
     );
@@ -49,7 +55,9 @@ var ListApp = React.createClass({
    * Event handler for 'change' events coming from the MessageStore
    */
   _onChange: function() {
-    this.setState(getStateFromStores());
+    var state = getStateFromStores();
+    console.log('onChange', state);
+    this.setState(state);
   }
 
 });
